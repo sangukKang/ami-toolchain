@@ -1,0 +1,23 @@
+---
+- name: Install Packer
+  hosts: all
+  become: yes
+  pre_tasks:
+    - include_vars: "../../env_vars/vars.yml"
+  tasks:
+    - name: Create a packer directory
+      file:
+        path: "{{ packer.dir }}"
+        state: directory
+
+    - name: Install Packer
+      become: yes
+      unarchive:
+        src: "https://releases.hashicorp.com/packer/{{ packer.version }}/packer_{{ packer.version }}_linux_amd64.zip"
+        dest: "{{ packer.dir }}"
+        remote_src: yes
+
+    - name: Remove unused zip directory
+      file:
+        path: "{{ packer.dir }}/packer_{{ packer.version }}_linux_amd64.zip"
+        state: absent

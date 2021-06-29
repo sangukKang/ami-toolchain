@@ -1,0 +1,32 @@
+---
+- name: Install node
+  hosts: all
+  become: yes
+  pre_tasks:
+    - include_vars: "../../env_vars/vars.yml"
+  tasks:
+    # RedHat
+    - name: Redhat pkage download
+      shell: "curl -sL https://rpm.nodesource.com/setup_{{ node.version }} | sudo -E bash -"
+      when: ansible_os_family == 'RedHat'
+
+    - name: RedHat nodejs install
+      yum:
+        name: nodejs
+        state: present
+      when: ansible_os_family == 'RedHat'
+
+    # Debian
+    - name: Redhat pkage download
+      shell: "curl -sL https://deb.nodesource.com/setup_{{ node.version }} | sudo -E bash -"
+      when: ansible_os_family == 'Debian'
+
+    - name: Debian nodejs install
+      apt:
+        name: nodejs
+        state: present
+      when: ansible_os_family == 'Debian'
+
+    # npm cli
+    - name: npm cli global install
+      shell: "npm i -g @vue/cli"

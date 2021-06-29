@@ -1,0 +1,21 @@
+site_name: ansible guide
+pages:
+  - Main: index.md
+  - Build: 'build/build.md'
+  - Source:
+      - 'develop': 'source/development.md'
+      - 'directory': 'source/directory.md'
+  - Deployment:
+      - 'jenkins': 'deployment/jenkins.md'
+  - Grafana:
+      - 'intro': 'grafana/grafana_introduce.md'
+      - 'manual': 'grafana/manual_grafana.md'
+      - 'alert': 'grafana/menual_grafana_alert.md'
+
+theme: readthedocs
+markdown_extensions:
+  - admonition
+  - footnotes
+  - meta
+  - toc:
+      permalink: true

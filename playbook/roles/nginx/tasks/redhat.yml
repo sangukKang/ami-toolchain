@@ -1,0 +1,5 @@
+---
+- name: Ensure nginx is installed.
+  package:
+    name: "{{ nginx.version }}"
+    state: present

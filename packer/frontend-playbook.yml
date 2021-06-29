@@ -1,0 +1,5 @@
+---
+- import_playbook: "../playbook/roles/common/tasks/main.yml"
+- import_playbook: "../playbook/roles/nginx/tasks/main.yml"
+- import_playbook: "../playbook/roles/nodejs/tasks/main.yml"
+- import_playbook: "../playbook/roles/codeDeploy/tasks/main.yml"

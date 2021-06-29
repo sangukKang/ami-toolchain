@@ -1,0 +1,29 @@
+---
+- name: Install codeDeploy
+  hosts: all
+  become: yes
+  pre_tasks:
+    - include_vars: "../../env_vars/vars.yml"
+  tasks:
+
+    - include: "{{ ansible_os_family }}.yml"
+
+    - name: "Get CodeDeploy | s3"
+      get_url:
+        url: "https://aws-codedeploy-{{codedeploy.aws_region}}.s3.amazonaws.com/latest/install"
+        dest: /tmp/codedeploy-install
+      when: is_codedeploy_installed is failed
+
+    - name: "Codedeploy Install Binary | Permission Executable"
+      file:
+        state: file
+        path: /tmp/codedeploy-install
+        group: root
+        owner: root
+        mode: 0755
+      when: is_codedeploy_installed is failed
+
+    - name: "Codedeploy Install"
+      become: true
+      command: /tmp/codedeploy-install auto
+      when: is_codedeploy_installed is failed

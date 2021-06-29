@@ -1,0 +1,7 @@
+---
+- name: Web base image
+  hosts: all
+  pre_tasks:
+      - include_vars: "env_vars/{{ env }}/vars.yml"
+  roles:
+    - ../roles/common

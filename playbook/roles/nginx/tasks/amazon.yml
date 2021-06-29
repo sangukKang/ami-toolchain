@@ -1,0 +1,9 @@
+---
+- name: extras enable
+  shell: "amazon-linux-extras enable {{ nginx.aws_version }}"
+
+- name: Ensure nginx is installed.
+  command: "amazon-linux-extras install {{ nginx.aws_version }}=latest -y"
+
+- command: chkconfig nginx on
+- command: service nginx restart

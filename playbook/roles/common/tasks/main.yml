@@ -1,0 +1,25 @@
+---
+- name: Install Common
+  hosts: all
+  become: yes
+  gather_facts: true
+  pre_tasks:
+    - include_vars: "../../env_vars/vars.yml"
+  tasks:
+    # 한국내 서비스...
+    - name: set Asia/Seoul timezone
+      timezone:
+        name: Asia/Seoul
+
+    - name: Include RHEL or Debian variable values
+      include_vars: "../vars/{{ ansible_os_family }}.yml"
+
+    - name: "Get Instance Metadata | ec2"
+      action: ec2_metadata_facts
+
+    - include: "{{ ansible_os_family }}.yml"
+
+    - name: "Install Packages | pip"
+      pip:
+        state: present
+        name: ['awscli', 'ansible']

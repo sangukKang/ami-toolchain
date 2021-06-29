@@ -1,0 +1,85 @@
+---
+- name: Install gitlab
+  hosts: all
+  gather_facts: true
+  become: yes
+  pre_tasks:
+    - include_vars: "../vars/main.yml"
+    - include_vars: "../../env_vars/vars.yml"
+  tasks:
+    - name: Include RHEL or Debian variable values
+      include_vars: "../vars/{{ ansible_os_family }}.yml"
+
+    - name: Check if GitLab configuration file already exists.
+      stat: path=/etc/gitlab/gitlab.rb
+      register: gitlab_config_file
+
+    - name: Check if GitLab is already installed.
+      stat: path=/usr/bin/gitlab-ctl
+      register: gitlab_file
+
+    # Install GitLab and its dependencies.
+    - name: Install GitLab dependencies.
+      package:
+        name:
+          - openssh-server
+          - postfix
+          - curl
+          - openssl
+          - tzdata
+        state: present
+
+    - name: Install GitLab dependencies update (Debian).
+      shell: apt update
+      when: ansible_os_family == 'Debian'
+
+    - name: Install GitLab dependencies (Debian).
+      apt:
+        name: gnupg2
+        state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: Download GitLab repository installation script.
+      get_url:
+        url: "{{ gitlab_repository_installation_script_url }}"
+        dest: /tmp/gitlab_install_repository.sh
+      when: not gitlab_file.stat.exists
+
+    - name: Install GitLab repository.
+      command: bash /tmp/gitlab_install_repository.sh
+      register: output
+      when: not gitlab_file.stat.exists
+
+    - name: Define the Gitlab package name.
+      set_fact:
+        gitlab_package_name: "{{ gitlab_edition }}{{ gitlab_package_version_separator }}{{ gitlab_version }}"
+      when: gitlab_version | default(false)
+
+    - name: Install GitLab
+      package:
+        name: "{{ gitlab_package_name | default(gitlab_edition) }}"
+        state: present
+      when: not gitlab_file.stat.exists
+
+    # Start and configure GitLab. Sometimes the first run fails, but after that,
+    # restarts fix problems, so ignore failures on this run.
+    - name: Reconfigure GitLab (first run).
+      command: >
+        gitlab-ctl reconfigure
+        creates=/var/opt/gitlab/bootstrapped
+      failed_when: false
+
+    - name: Copy GitLab configuration file.
+      template:
+        src: "../templates/{{ gitlab_config_template }}"
+        dest: /etc/gitlab/gitlab.rb
+        owner: root
+        group: root
+        mode: 0600
+      notify: restart gitlab
+
+  handlers:
+    - name: restart gitlab
+      command: gitlab-ctl reconfigure
+      register: gitlab_restart
+      failed_when: gitlab_restart_handler_failed_when

@@ -1,0 +1,11 @@
+---
+- import_playbook: "../playbook/roles/nodejs/tasks/main.yml"
+- import_playbook: "../playbook/roles/codeDeploy/tasks/main.yml"
+- import_playbook: "../playbook/roles/java/tasks/main.yml"
+- import_playbook: "../playbook/roles/gradle/tasks/main.yml"
+- import_playbook: "../playbook/roles/maven/tasks/main.yml"
+- import_playbook: "../playbook/roles/terraform/tasks/main.yml"
+- import_playbook: "../playbook/roles/packer/tasks/main.yml"
+- import_playbook: "../playbook/roles/nexus/main.yml"
+- import_playbook: "../playbook/roles/jenkins/tasks/main.yml"
+

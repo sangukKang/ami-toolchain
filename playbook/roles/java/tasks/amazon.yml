@@ -1,0 +1,8 @@
+---
+- name: yum update
+  shell: amazon-linux-extras enable corretto8
+
+- name: Ensure Java is installed.
+  package:
+    name: '{{ __java_packages }}'
+    state: present

@@ -1,0 +1,24 @@
+---
+- name: yum repo file create
+  copy:
+    src: 'grafana_repo.j2'
+    dest: /etc/yum.repos.d/grafana.repo
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+
+- name: grafana packeage install
+  yum:
+    name: grafana
+    state: installed
+
+#- name : grafana plugin install
+- command: 'sudo grafana-cli plugins install raintank-worldping-app'
+- command: 'sudo grafana-cli plugins install grafana-image-renderer'
+- command: 'sudo grafana-cli plugins install grafana-worldmap-panel'
+- command: 'sudo grafana-cli plugins install alexanderzobnin-zabbix-app'
+
+#- name : grafana service restart
+- command: 'sudo systemctl enable grafana-server.service'
+- command: 'sudo systemctl start grafana-server'

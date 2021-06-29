@@ -1,0 +1,10 @@
+---
+- name: Install nexus
+  hosts: all
+  gather_facts: true
+  become: yes
+  pre_tasks:
+    - include_vars: "../env_vars/vars.yml"
+
+  roles:
+    - role: /tmp/ami/playbook/roles/nexus

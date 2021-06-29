@@ -1,0 +1,22 @@
+---
+- name: Install terraform
+  hosts: all
+  become: yes
+  pre_tasks:
+    - include_vars: "../../env_vars/vars.yml"
+  tasks:
+    - name: Download terraform
+      get_url:
+        url: "https://releases.hashicorp.com/terraform/{{ terraform.version }}/terraform_{{ terraform.version }}_linux_amd64.zip"
+        dest: "/{{ terraform.dir }}/terraform_{{ terraform.version }}_linux_amd64.zip"
+
+    - name: Unarchive terraform
+      unarchive:
+        src: "/opt/terraform_{{ terraform.version }}_linux_amd64.zip"
+        dest: "/usr/local/bin/"
+        remote_src: True
+
+    - name: Remove unused zip directory
+      file:
+        path: "/{{ terraform.dir }}/terraform_{{ terraform.version }}_linux_amd64.zip"
+        state: absent

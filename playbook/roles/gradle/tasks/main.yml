@@ -1,0 +1,35 @@
+---
+- name: Install gradle
+  hosts: all
+  become: yes
+  pre_tasks:
+    - include_vars: "../../env_vars/vars.yml"
+  tasks:
+    - name: Install unzip
+      package:
+        name: unzip
+        state: latest
+
+    - name: Download gradle
+      get_url:
+        url: "https://services.gradle.org/distributions/gradle-{{ gradle.version }}-all.zip"
+        dest: "{{ gradle.dir }}/gradle-{{ gradle.version }}-all.zip"
+
+    - name: Unarchive gradle
+      unarchive:
+        src: "{{ gradle.dir }}/gradle-{{ gradle.version }}-all.zip"
+        dest: "{{ gradle.dir }}"
+        remote_src: True
+
+    - name: Set gradle environment variable
+      blockinfile:
+        path: /etc/profile
+        marker: "# {mark} gradle "
+        block: |
+          export GRADLE_HOME=/opt/gradle-{{ gradle.version }}
+          export PATH=$PATH:$GRADLE_HOME/bin
+
+    - name: Remove unused zip directory
+      file:
+        path: "{{ gradle.dir }}/gradle-{{ gradle.version }}-all.zip"
+        state: absent

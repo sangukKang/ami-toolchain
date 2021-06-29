@@ -1,0 +1,4 @@
+---
+- import_playbook: "../playbook/roles/common/tasks/main.yml"
+- import_playbook: "../playbook/roles/java/tasks/main.yml"
+- import_playbook: "../playbook/roles/sonarqube/tasks/main.yml"

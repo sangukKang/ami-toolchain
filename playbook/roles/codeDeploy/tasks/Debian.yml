@@ -1,0 +1,6 @@
+---
+- name: "Check if CodeDeploy is already installed"
+  command: dpkg-query -W 'codedeploy-agent'
+  register: is_codedeploy_installed
+  changed_when: false
+  ignore_errors: true

@@ -1,0 +1,12 @@
+---
+- name: "Ensure the epel repo is installed"
+  package:
+    name: epel-release
+    state: present
+  when: ansible_distribution != 'Amazon' and ansible_os_family == 'RedHat'
+
+- name: "Install Packages | package manager"
+  package:
+    state: present
+    name: "{{ item }}"
+  with_items: "{{ packages }}"

@@ -1,0 +1,2 @@
+---
+- import_playbook: '../playbook/roles/gitlab/tasks/main.yml'

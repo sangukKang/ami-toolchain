@@ -1,0 +1,17 @@
+---
+- name: Install nginx
+  hosts: all
+  gather_facts: true
+  become: yes
+  pre_tasks:
+    - include_vars: "../../env_vars/vars.yml"
+  tasks:
+    # Setup/install tasks.
+    - include_tasks: amazon.yml
+      when: ansible_distribution == 'Amazon' and ansible_os_family == 'RedHat'
+
+    - include_tasks: redhat.yml
+      when: ansible_distribution == 'RedHat' and ansible_os_family == 'RedHat'
+
+    - include_tasks: debian.yml
+      when: ansible_distribution == 'Ubuntu' and ansible_os_family == 'Debian'

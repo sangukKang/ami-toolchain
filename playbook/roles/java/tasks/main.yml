@@ -1,0 +1,43 @@
+---
+- name: Install java
+  hosts: all
+  gather_facts: true
+  become: yes
+  pre_tasks:
+    - include_vars: "../../env_vars/vars.yml"
+  tasks:
+    - name: Amazon Linux 2
+      include_vars: "../vars/Amazon2.yml"
+      when: ansible_distribution == 'Amazon' and ansible_service_mgr == 'systemd'
+
+    - name: Include OS-specific variables for Fedora or FreeBSD.
+      include_vars: "../vars/{{ ansible_distribution }}.yml"
+      when: ansible_distribution == 'FreeBSD' or ansible_distribution == 'Fedora'
+
+    - name: Include version-specific variables for CentOS/RHEL.
+      include_vars: "../vars/RedHat.yml"
+      when: ansible_distribution == 'CentOS' or
+        ansible_distribution == 'Red Hat Enterprise Linux' or
+        ansible_distribution == 'RedHat'
+
+    - name: Include version-specific variables for Ubuntu.
+      include_vars: "../vars/{{ ansible_distribution }}.yml"
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Include version-specific variables for Debian.
+      include_vars: "../vars/{{ ansible_distribution|title }}.yml"
+      when: ansible_os_family == 'Debian'
+
+
+    # Setup/install tasks.
+    - include_tasks: amazon.yml
+      when: ansible_distribution == 'Amazon' and ansible_os_family == 'RedHat'
+
+    - include_tasks: redhat.yml
+      when: ansible_distribution != 'Amazon' and ansible_os_family == 'RedHat'
+
+    - include_tasks: debian.yml
+      when: ansible_os_family == 'Debian'
+
+    - include_tasks: freebsd.yml
+      when: ansible_os_family == 'FreeBSD'

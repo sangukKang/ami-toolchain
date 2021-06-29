@@ -1,0 +1,10 @@
+---
+service:
+  name:
+    opsflex
+  host:
+    127.0.0.1
+aws:
+  region:
+    ap-northeast-2a
+    ap-northeast-2c

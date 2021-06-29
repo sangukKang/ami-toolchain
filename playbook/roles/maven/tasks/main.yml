@@ -1,0 +1,26 @@
+---
+- name: Install Maven
+  hosts: all
+  become: yes
+  pre_tasks:
+    - include_vars: "../../env_vars/vars.yml"
+  tasks:
+    - name: Install Maven
+      become: yes
+      unarchive:
+        src: "https://mirror.apache-kr.org/maven/maven-3/{{ maven.version }}/binaries/apache-maven-{{ maven.version }}-bin.zip"
+        dest: "{{ maven.dir }}"
+        remote_src: yes
+
+    - name: Set Maven environment variable
+      blockinfile:
+        path: /etc/profile
+        marker: "# {mark} Maven"
+        block: |
+          export MAVEN_HOME=/opt/apache-maven-{{ maven.version }}
+          export PATH=$PATH:$MAVEN_HOME/bin
+
+    - name: Remove unused zip directory
+      file:
+        path: "{{ maven.dir }}/apache-maven-{{ maven.version }}-bin.zip"
+        state: absent
